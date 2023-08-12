@@ -1,24 +1,16 @@
-export HOMEBREW_API_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
-export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
-export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
-export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
-export HOMEBREW_PIP_INDEX_URL="https://pypi.tuna.tsinghua.edu.cn/simple"
-[ -f "/Users/pilrymage/.ghcup/env" ] && source "/Users/pilrymage/.ghcup/env" # ghcup-env
-
-export PATH="/usr/local/opt/perl/bin:$PATH"
-export http_proxy=http://localhost:7890
-export https_proxy=http://localhost:7890
-alias config='/usr/bin/git --git-dir=/Users/pilrymage/.cfg/ --work-tree=/Users/pilrymage'
+source /Users/pilrymage/perl5/perlbrew/etc/bashrc
 #  ____ _____
 # |  _ \_   _|  Derek Taylor (DistroTube)
 # | | | || |    http://www.youtube.com/c/DistroTube
 # | |_| || |    http://www.gitlab.com/dwt1/
 # |____/ |_|
-# My zsh config. Not much to see here; just some pretty standard stuff.
+#
+# My bash config. Not much to see here; just some pretty standard stuff.
 
 ### EXPORT
 export TERM="xterm-256color"                      # getting proper colors
-export HISTORY_IGNORE="(ls|cd|pwd|exit|sudo reboot|history|cd -|cd ..)"
+export HISTCONTROL=ignoredups:erasedups           # no duplicate entries
+export ALTERNATE_EDITOR=""                        # setting for emacsclient
 export EDITOR="emacsclient -t -a ''"              # $EDITOR use Emacs in terminal
 export VISUAL="emacsclient -c -a emacs"           # $VISUAL use Emacs in GUI mode
 
@@ -39,10 +31,16 @@ export MANPAGER="less"
 
 ### SET VI MODE ###
 # Comment this line out to enable default emacs-like bindings
-# bindkey -v
+# set -o vi
+# bind -m vi-command 'Control-l: clear-screen'
+# bind -m vi-insert 'Control-l: clear-screen'
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
+
+### PROMPT
+# This is commented out if using starship prompt
+PS1='[\u@\h \W]\$ '
 
 ### PATH
 if [ -d "$HOME/.bin" ] ;
@@ -93,48 +91,54 @@ case ${TERM} in
     ;;
 esac
 
-### Function extract for common file formats ###
-SAVEIFS=$IFS
-IFS=$(echo -en "\n\b")
+### SHOPT
+# shopt -s autocd # change to named directory
+shopt -s cdspell # autocorrects cd misspellings
+shopt -s cmdhist # save multi-line commands in history as single line
+shopt -s dotglob
+shopt -s histappend # do not overwrite history
+shopt -s expand_aliases # expand aliases
+shopt -s checkwinsize # checks term size when bash regains control
 
-function extract {
- if [ -z "$1" ]; then
-    # display usage if no parameters given
-    echo "Usage: extract <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
-    echo "       extract <path/file_name_1.ext> [path/file_name_2.ext] [path/file_name_3.ext]"
- else
-    for n in "$@"
+#ignore upper and lowercase when TAB completion
+bind "set completion-ignore-case on"
+
+### COUNTDOWN
+
+cdown () {
+    N=$1
+  while [[ $((--N)) >  0 ]]
     do
-      if [ -f "$n" ] ; then
-          case "${n%,}" in
-            *.cbt|*.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar)
-                         tar xvf "$n"       ;;
-            *.lzma)      unlzma ./"$n"      ;;
-            *.bz2)       bunzip2 ./"$n"     ;;
-            *.cbr|*.rar)       unrar x -ad ./"$n" ;;
-            *.gz)        gunzip ./"$n"      ;;
-            *.cbz|*.epub|*.zip)       unzip ./"$n"       ;;
-            *.z)         uncompress ./"$n"  ;;
-            *.7z|*.arj|*.cab|*.cb7|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.pkg|*.rpm|*.udf|*.wim|*.xar)
-                         7z x ./"$n"        ;;
-            *.xz)        unxz ./"$n"        ;;
-            *.exe)       cabextract ./"$n"  ;;
-            *.cpio)      cpio -id < ./"$n"  ;;
-            *.cba|*.ace)      unace x ./"$n"      ;;
-            *)
-                         echo "extract: '$n' - unknown archive method"
-                         return 1
-                         ;;
-          esac
-      else
-          echo "'$n' - file does not exist"
-          return 1
-      fi
+        echo "$N" |  figlet -c | lolcat &&  sleep 1
     done
-fi
 }
 
-IFS=$SAVEIFS
+### ARCHIVE EXTRACTION
+# usage: ex <file>
+ex ()
+{
+  if [ -f "$1" ] ; then
+    case $1 in
+      *.tar.bz2)   tar xjf $1   ;;
+      *.tar.gz)    tar xzf $1   ;;
+      *.bz2)       bunzip2 $1   ;;
+      *.rar)       unrar x $1   ;;
+      *.gz)        gunzip $1    ;;
+      *.tar)       tar xf $1    ;;
+      *.tbz2)      tar xjf $1   ;;
+      *.tgz)       tar xzf $1   ;;
+      *.zip)       unzip $1     ;;
+      *.Z)         uncompress $1;;
+      *.7z)        7z x $1      ;;
+      *.deb)       ar x $1      ;;
+      *.tar.xz)    tar xf $1    ;;
+      *.tar.zst)   unzstd $1    ;;
+      *)           echo "'$1' cannot be extracted via ex()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
 
 ### ALIASES ###
 
@@ -163,7 +167,7 @@ up () {
 
 # vim and emacs
 alias vim="nvim"
-alias em="/usr/bin/emacs -nw"
+alias em="emacs -nw"
 alias emacs="emacsclient -c -a 'emacs'"
 
 # Changing "ls" to "exa"
@@ -289,11 +293,11 @@ alias dtosbackup='cp -Rf /etc/dtos ~/dtos-backup-$(date +%Y.%m.%d-%H.%M.%S)'
 # Or install it from the Arch User Repository: shell-color-scripts
 colorscript random
 
-### BASH INSULTER (works in zsh though) ###
+### BASH INSULTER ###
 if [ -f /etc/bash.command-not-found ]; then
     . /etc/bash.command-not-found
 fi
 
 ### SETTING THE STARSHIP PROMPT ###
-eval "$(starship init zsh)"
-STARSHIP_SHELL='%% zsh'
+eval "$(starship init bash)"
+STARSHIP_SHELL='$ bash'
