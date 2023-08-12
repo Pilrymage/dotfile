@@ -8,6 +8,4 @@ export HOMEBREW_PIP_INDEX_URL="https://pypi.tuna.tsinghua.edu.cn/simple"
 export PATH="/usr/local/opt/perl/bin:$PATH"
 export http_proxy=http://localhost:7890
 export https_proxy=http://localhost:7890
-exec fish
-alias config='/usr/bin/git --git-dir=/Users/pilrymage/.cfg/ --work-tree=/Users/pilrymage'
 alias config='/usr/bin/git --git-dir=/Users/pilrymage/.cfg/ --work-tree=/Users/pilrymage'
