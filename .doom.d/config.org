@@ -161,7 +161,13 @@
 
 
 (setq org-hierarchical-todo-statistics t)
-
+(setq lsp-clients-clangd-args '("-j=3"
+				"--background-index"
+				"--clang-tidy"
+				"--completion-style=detailed"
+				"--header-insertion=never"
+				"--header-insertion-decorators=0"))
+(after! lsp-clangd (set-lsp-priority! 'clangd 2))
 
 (set-evil-initial-state! 'vterm-mode 'emacs)
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
