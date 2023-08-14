@@ -168,7 +168,7 @@
 				"--header-insertion=never"
 				"--header-insertion-decorators=0"))
 (after! lsp-clangd (set-lsp-priority! 'clangd 2))
-
+(use-package! kbd-mode)
 (set-evil-initial-state! 'vterm-mode 'emacs)
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
