@@ -12,6 +12,9 @@
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 (package! rime
   :recipe (:host github :repo "DogLooksGood/emacs-rime" :files ("*.el" "Makefile" "lib.c")))
+(package! kbd-mode
+  :recipe (:host github
+           :repo "kmonad/kbd-mode"))
 (package! flycheck-aspell)
 (package! calfw)
 (package! tldr)

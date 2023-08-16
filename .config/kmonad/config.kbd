@@ -22,13 +22,14 @@
   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
   caps a    s    d    f    g    h    j    k    l    ;    '    ret
   lsft      z    x    c    v    b    n    m    ,    .    /    rsft
-  wkup lctl lmet lalt           spc            ralt sys rctl  pgup up   pgdn
-                                                              left down rght
+  @wku lctl lmet lalt           spc            ralt sys rctl  pgup up   pgdn
+                                                               left down rght
 )
 ;; Because the Keycode for "print screen" is actually 'SysReq' ("ssrq" or "sys")
 ;; for relatively interesting historical reasons. Have a look at [this
 ;; issue](https://github.com/david-janssen/kmonad/issues/59) if you want more
 ;; information.
+;; In macOS, it is f13.
 
 (deflayer colemak
   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end ins del
@@ -36,17 +37,34 @@
   tab  q    w    f    p    g    j    l    u    y    ;    [    ]    \\
   @ena a    r    s    t    d    h    n    e    i    o    '    ret
   lsft      z    x    c    v    b    k    m    ,    .    /    rsft
-  wkup lctl lmet lalt           @pnc           ralt @sta rctl pgup up pgdn
+  @wku lctl lmet @ext           @pnc           @sym @brd rctl pgup up pgdn
                                                               left down rght
 )
-
 (deflayer colemak-dh-improve
   esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end ins del
   grv  1    2    3    4    5    6    =    7    8    9    0    -    bspc
   tab  q    w    f    p    b    [    j    l    u    y    ;    '    \\
   @ena a    r    s    t    g    ]    m    n    e    i    o    ret
-  z         x    c    d    v    /    k    k    h    ,    .    rsft
-  wkup lctl lmet lsft           @pnc           rsft @sta rctl pgup up pgdn
+  lsft      x    c    d    v    z    /    k    h    ,    .    rsft
+  @wku lctl lmet @ext           @pnc           @sym @brd rctl pgup up pgdn
+                                                              left down rght
+aatg
+(deflayer extend
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end ins del
+  grv  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  -    =    bspc
+  tab  q    w    f    p    g    j    pgup home up   end  [    ]    \\
+  @ena a    r    lsft lctl d    h    pgdn left down rght del  ret
+  lsft      C-z  C-x  C-c  C-v  b    k    bspc ,    .    /    rsft
+  @wku lctl lmet @ret           @pnc           @sym @brd rctl pgup up pgdn
+                                                              left down rght
+)
+(deflayer symbol
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end ins del
+  _    _    _    _    _    ·    ¡    ¿    /    *    -    ×    ÷    bspc
+  tab  <    >    #    ^    &    !    %    7    8    9    :    \_  _
+  @ena \\   |    {    \(   [    ?    =    4    5    6    +    ret
+  lsft      @    }    \)   ]    $    ~    0    1    2    3    rsft
+  @wku lctl lmet @ext           @pnc           @sym @brd rctl pgup up pgdn
                                                               left down rght
 )
 (deflayer qwerty
@@ -55,8 +73,8 @@
   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
   caps a    s    d    f    g    h    j    k    l    ;    '    ret
   lsft      z    x    c    v    b    n    m    ,    .    /    rsft
-  wkup lctl lmet lalt           spc            ralt @sta rctl  pgup up   pgdn
-                                                              left down rght
+  @wku lctl lmet lalt           spc            ralt @brd rctl  pgup up   pgdn
+                                                               left down rght
 )
 
 (deflayer symbol
@@ -71,8 +89,11 @@
 (defalias
   ena (tap-next esc alt)
   pnc (tap-next spc ctl)
-  sta (multi-tap 300 caps
-                 300 (layer-switch colemak-dh-improve)
-                 300 (layer-switch qwerty)
-                 (layer-switch colemak))
+  brd (multi-tap 500 (layer-switch colemak)
+                 500 (layer-switch colemak-dh-improve)
+                 (layer-switch qwerty))
+  sym (layer-toggle symbol)
+  ext (layer-switch extend)
+  wku (tap-next caps wkup)
+aaaar
  )
